@@ -1,0 +1,16 @@
+*{
+  margin: 0;
+  padding: 0;
+}
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+ul {
+  padding: 0;
+  list-style: none;
+}
+
+h5 {
+  margin-bottom: 1rem;
+}
