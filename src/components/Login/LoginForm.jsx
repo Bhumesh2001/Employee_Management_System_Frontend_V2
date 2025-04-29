@@ -14,7 +14,6 @@ const LoginForm = () => {
             return;
         }
         setError('');
-        console.log('Login attempt with:', { email, password, role });
         login({ email, password, role });
     };
 
