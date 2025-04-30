@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Base URL for API
-const API_URL = 'https://employee-management-system-backend-taupe.vercel.app/api';
+const API_URL = 'http://localhost:5000/api';
 
 // Axios instance with default config
 const apiInstance = axios.create({

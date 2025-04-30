@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Card, Form, Button, Row, Col, Alert } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import { postData } from "../../utils/api"; // adjust the path if needed
 
 export default function ApplyLeave() {
     const [formData, setFormData] = useState({
@@ -8,6 +10,8 @@ export default function ApplyLeave() {
     });
 
     const [message, setMessage] = useState("");
+    const [variant, setVariant] = useState("danger");
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         setFormData((prev) => ({
@@ -16,21 +20,35 @@ export default function ApplyLeave() {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+
         if (!formData.startDate || !formData.endDate) {
+            setVariant("danger");
             setMessage("Please fill both Start and End Dates!");
             return;
         }
+
         if (formData.startDate > formData.endDate) {
+            setVariant("danger");
             setMessage("Start Date cannot be after End Date!");
             return;
         }
 
-        console.log("Leave Applied:", formData);
-        setMessage("Leave Applied Successfully!");
-        // Reset form
-        setFormData({ startDate: "", endDate: "" });
+        try {
+            await postData("/leave", formData);
+            setVariant("success");
+            setMessage("Leave Applied Successfully!");
+            setFormData({ startDate: "", endDate: "" });
+
+            setTimeout(() => navigate("/employee/leaves"), 1500);
+        } catch (error) {
+            console.error("Apply leave error:", error);
+            setVariant("danger");
+            setMessage(
+                error?.response?.data?.message || "Failed to apply for leave."
+            );
+        }
     };
 
     return (
@@ -39,7 +57,7 @@ export default function ApplyLeave() {
 
             {message && (
                 <Alert
-                    variant={message.includes("Successfully") ? "success" : "danger"}
+                    variant={variant}
                     onClose={() => setMessage("")}
                     dismissible
                 >
@@ -57,6 +75,7 @@ export default function ApplyLeave() {
                                 name="startDate"
                                 value={formData.startDate}
                                 onChange={handleChange}
+                                required
                             />
                         </Form.Group>
                     </Col>
@@ -69,6 +88,7 @@ export default function ApplyLeave() {
                                 name="endDate"
                                 value={formData.endDate}
                                 onChange={handleChange}
+                                required
                             />
                         </Form.Group>
                     </Col>

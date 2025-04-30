@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Form, Button, Card } from "react-bootstrap";
+import { useNavigate } from 'react-router-dom'
 import { postData } from "../../utils/api";
 
 export default function AddEmployee() {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         email: "",
         password: "",
@@ -20,14 +22,20 @@ export default function AddEmployee() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Employee Data:", formData);
         try {
-            const data = await postData('/employee', formData);
-            console.log(data, '==');
+            await postData('/employee', formData);
             alert('Employee created successfully');
+            setFormData({
+                email: "",
+                password: "",
+                name: "",
+                role: "employee",
+                position: "",
+            });
+            navigate('/admin/employees')
         } catch (error) {
-            console.log(error);
-            alert(error.message);
+            console.log(error?.response?.data || error.message);
+            alert(error?.response?.data.message || error.message);
         }
     };
 

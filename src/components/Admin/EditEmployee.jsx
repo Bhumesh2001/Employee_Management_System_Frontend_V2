@@ -1,18 +1,35 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Form, Button, Card } from "react-bootstrap";
 import { useParams, useNavigate } from "react-router-dom";
-import { putData } from '../../utils/api'; 
+import { getData, putData } from '../../utils/api';
 
 export default function EditEmployee() {
     const { id } = useParams();
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         email: "",
-        password: "",
         name: "",
         role: "employee",
         position: "",
     });
+
+    useEffect(() => {
+        const fetchEmployee = async () => {
+            try {
+                const data = await getData(`/employee/${id}`);                
+                setFormData({
+                    email: data.data.email,
+                    name: data.data.name,
+                    role: data.data.role || "employee",
+                    position: data.data.position || "",
+                });
+            } catch (error) {
+                console.error("Error fetching employee:", error?.response?.data || error.message);
+                alert("Failed to fetch employee data.");
+            }
+        };
+        fetchEmployee();
+    }, [id]);
 
     const handleChange = (e) => {
         setFormData({
@@ -23,15 +40,13 @@ export default function EditEmployee() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Employee Data:", formData);
         try {
-            const updatedEmployee = await putData(`/employee/${id}`, formData);
-            console.log("Employee updated successfully:", updatedEmployee);
+            await putData(`/employee/${id}`, formData);
             alert('Employee updated successfully');
-            navigate(`/employee`);
+            navigate(`/admin/employees`);
         } catch (error) {
-            console.error("Error updating employee data:", error);
-            alert(error.message);
+            console.error("Error updating employee data:", error?.response?.data || error.message);
+            alert(error?.response?.data || error.message);
         }
     };
 
@@ -64,18 +79,6 @@ export default function EditEmployee() {
                         />
                     </Form.Group>
 
-                    <Form.Group className="mb-3" controlId="formPassword">
-                        <Form.Label>Password</Form.Label>
-                        <Form.Control
-                            type="password"
-                            name="password"
-                            value={formData.password}
-                            onChange={handleChange}
-                            placeholder="Enter password"
-                            required
-                        />
-                    </Form.Group>
-
                     <Form.Group className="mb-3" controlId="formPosition">
                         <Form.Label>Position</Form.Label>
                         <Form.Control
@@ -92,7 +95,7 @@ export default function EditEmployee() {
                     <Form.Control type="hidden" name="role" value="employee" />
 
                     <Button variant="primary" type="submit">
-                        Edit Employee
+                        Save
                     </Button>
                 </Form>
             </Card.Body>

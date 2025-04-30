@@ -6,7 +6,7 @@ export const getData = async (endpoint, params = {}) => {
         const response = await apiInstance.get(endpoint, { params });
         return response.data;
     } catch (error) {
-        console.error("Error fetching data: ", error);
+        console.error("Error fetching data: ", error.response.data.message);
         throw error; // Rethrow to handle in the calling component
     }
 };
@@ -17,7 +17,7 @@ export const postData = async (endpoint, data) => {
         const response = await apiInstance.post(endpoint, data);
         return response.data;
     } catch (error) {
-        console.error("Error posting data: ", error);
+        console.error("Error posting data: ", error.response.data.message);
         throw error; // Rethrow to handle in the calling component
     }
 };
@@ -28,7 +28,7 @@ export const putData = async (endpoint, data) => {
         const response = await apiInstance.put(endpoint, data);
         return response.data;
     } catch (error) {
-        console.error("Error updating data: ", error);
+        console.error("Error updating data: ", error.response.data.message);
         throw error; // Rethrow to handle in the calling component
     }
 };
@@ -39,7 +39,7 @@ export const patchData = async (endpoint, data) => {
         const response = await apiInstance.patch(endpoint, data);
         return response.data;
     } catch (error) {
-        console.error("Error updating data: ", error);
+        console.error("Error updating data: ", error.response.data.message);
         throw error; // Rethrow to handle in the calling component
     }
 };
@@ -50,7 +50,7 @@ export const deleteData = async (endpoint) => {
         const response = await apiInstance.delete(endpoint);
         return response.data;
     } catch (error) {
-        console.error("Error deleting data: ", error);
+        console.error("Error deleting data: ", error.response.data.message);
         throw error; // Rethrow to handle in the calling component
     }
 };

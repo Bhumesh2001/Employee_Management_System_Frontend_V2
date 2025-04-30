@@ -59,7 +59,7 @@ function AdminLayout() {
                         <Route index element={<DashboardPage />} />
                         <Route path="employees" element={<EmployeesPage />} />
                         <Route path="add-employee" element={<AddEmployeePage />} />
-                        <Route path="edit-employee" element={<EditEmployeePage />} />
+                        <Route path="edit-employee/:id" element={<EditEmployeePage />} />
                         <Route path="leaves" element={<LeavesPage />} />
                         <Route path="payslips" element={<PayslipsPage />} />
                         <Route path="attendances" element={<AttendancePage />} />

@@ -4,25 +4,24 @@ import { getData } from '../../utils/api';
 
 export default function AttendanceList() {
     const [attendances, setAttendances] = useState([]);
-    const [loading, setLoading] = useState(true);  // Loading state to show a loading indicator
-    const [error, setError] = useState(null);  // To handle errors if the API call fails
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    // Fetch attendance data from the API
     useEffect(() => {
         const fetchAttendances = async () => {
             try {
-                const data = await getData('/attendance/all');  // Call the API using getData
-                setAttendances(data);  // Update the state with the fetched data
+                const data = await getData('/attendance/all');
+                setAttendances(data.data);
             } catch (error) {
-                setError("Failed to fetch attendance data.");  // Set error message if the request fails
-                console.error(error);
+                setError("Failed to fetch attendance data.");
+                console.error(error.response.data);
             } finally {
-                setLoading(false);  // Stop loading after the request completes
+                setLoading(false);
             }
         };
 
         fetchAttendances();
-    }, []);  // Empty dependency array ensures the effect runs only once when the component mounts
+    }, []);
 
     return (
         <Card className="p-4 shadow-sm">
@@ -32,7 +31,7 @@ export default function AttendanceList() {
             {loading ? (
                 <div>Loading...</div>
             ) : error ? (
-                <div className="text-danger">{error}</div>  // Display error if there's an issue with fetching
+                <div className="text-danger">{error}</div>
             ) : (
                 <Table striped bordered hover responsive>
                     <thead>

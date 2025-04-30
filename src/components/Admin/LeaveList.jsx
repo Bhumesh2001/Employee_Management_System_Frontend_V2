@@ -12,10 +12,10 @@ export default function LeaveList() {
     useEffect(() => {
         const fetchLeaves = async () => {
             try {
-                const leavesData = await getData("/leave");  // Fetch all leave requests
-                setLeaves(leavesData);
+                const leavesData = await getData("/leave");
+                setLeaves(leavesData.data);
             } catch (error) {
-                console.error("Error fetching leave requests:", error);
+                console.error("Error fetching leave requests:", error.response.data);
             }
         };
         fetchLeaves();
