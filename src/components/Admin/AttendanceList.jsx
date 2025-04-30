@@ -1,20 +1,23 @@
 import { useState, useEffect } from "react";
-import { Card, Table } from "react-bootstrap";
+import { Card, Table, Form } from "react-bootstrap";
 import { getData } from '../../utils/api';
 
 export default function AttendanceList() {
     const [attendances, setAttendances] = useState([]);
+    const [filteredAttendances, setFilteredAttendances] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [searchQuery, setSearchQuery] = useState("");
 
     useEffect(() => {
         const fetchAttendances = async () => {
             try {
                 const data = await getData('/attendance/all');
                 setAttendances(data.data);
+                setFilteredAttendances(data.data);
             } catch (error) {
                 setError("Failed to fetch attendance data.");
-                console.error(error.response.data);
+                console.error(error.response?.data || error.message);
             } finally {
                 setLoading(false);
             }
@@ -23,11 +26,35 @@ export default function AttendanceList() {
         fetchAttendances();
     }, []);
 
+    useEffect(() => {
+        const query = searchQuery.toLowerCase();
+        const filtered = attendances.filter((att) => {
+            const emp = att.employeeId || {};
+            return (
+                emp.name?.toLowerCase().includes(query) ||
+                emp.email?.toLowerCase().includes(query) ||
+                emp.position?.toLowerCase().includes(query) ||
+                new Date(att.date).toLocaleDateString().includes(query)
+            );
+        });
+        setFilteredAttendances(filtered);
+    }, [searchQuery, attendances]);
+
     return (
         <Card className="p-4 shadow-sm">
             <h2 className="mb-4">Attendance List</h2>
 
-            {/* Displaying a loading state while fetching data */}
+            {/* Single Search Input */}
+            <Form className="mb-3">
+                <Form.Control
+                    type="text"
+                    placeholder="Search by name, email, position, or date"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                />
+            </Form>
+
+            {/* Table Display */}
             {loading ? (
                 <div>Loading...</div>
             ) : error ? (
@@ -46,8 +73,8 @@ export default function AttendanceList() {
                         </tr>
                     </thead>
                     <tbody>
-                        {attendances.length > 0 ? (
-                            attendances.map((attendance, index) => (
+                        {filteredAttendances.length > 0 ? (
+                            filteredAttendances.map((attendance, index) => (
                                 <tr key={attendance._id}>
                                     <td>{index + 1}</td>
                                     <td>{attendance.employeeId?.name || "N/A"}</td>
